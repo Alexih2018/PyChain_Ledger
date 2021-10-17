@@ -1,5 +1,6 @@
 ################################################################################
 # Imports
+
 import streamlit as st
 from dataclasses import dataclass
 from typing import Any, List
@@ -11,21 +12,10 @@ import hashlib
 # Step 1:
 # Create a Record Data Class
 
-# Define a new Python data class named `Record`. Give this new class a
+# Defining a new Python data class named `Record` with a
 # formalized data structure that consists of the `sender`, `receiver`, and
-# `amount` attributes. To do so, complete the following steps:
-# 1. Define a new class named `Record`.
-# 2. Add the `@dataclass` decorator immediately before the `Record` class
-# definition.
-# 3. Add an attribute named `sender` of type `str`.
-# 4. Add an attribute named `receiver` of type `str`.
-# 5. Add an attribute named `amount` of type `float`.
-# Note that you’ll use this new `Record` class as the data type of your `record` attribute in the next section.
+# `amount` attributes.
 
-
-# @TODO
-# Create a Record Data Class that consists of the `sender`, `receiver`, and
-# `amount` attributes
 @dataclass
 class Record:
     sender: str
@@ -35,19 +25,14 @@ class Record:
 # Step 2:
 # Modify the Existing Block Data Class to Store Record Data
 
-# Rename the `data` attribute in your `Block` class to `record`, and then set
-# it to use an instance of the new `Record` class that you created in the
-# previous section. To do so, complete the following steps:
-# 1. In the `Block` class, rename the `data` attribute to `record`.
+# 1. Add the `record` attribute to the Block class.
 # 2. Set the data type of the `record` attribute to `Record`.
 
 
 @dataclass
 class Block:
 
-    # Rename the `data` attribute to `record`, and set the data type to `Record`
     record: Record
-
     creator_id: int
     prev_hash: str = 0
     timestamp: str = datetime.datetime.utcnow().strftime("%H:%M:%S")
@@ -131,38 +116,20 @@ st.markdown("## Store Data in the Chain")
 # Step 3:
 # Add Relevant User Inputs to the Streamlit Interface
 
-# Code additional input areas for the user interface of your Streamlit
-# application. Create these input areas to capture the sender, receiver, and
-# amount for each transaction that you’ll store in the `Block` record.
-# To do so, complete the following steps:
-# 1. Delete the `input_data` variable from the Streamlit interface.
-# 2. Add an input area where you can get a value for `sender` from the user.
-# 3. Add an input area where you can get a value for `receiver` from the user.
-# 4. Add an input area where you can get a value for `amount` from the user.
-# 5. As part of the Add Block button functionality, update `new_block` so that `Block` consists of an attribute named `record`, which is set equal to a `Record` that contains the `sender`, `receiver`, and `amount` values. The updated `Block`should also include the attributes for `creator_id` and `prev_hash`.
-
-# @TODO:
-# Delete the `input_data` variable from the Streamlit interface.
-#input_data = st.text_input("Block Data")
-
-# @TODO:
-# Add an input area where you can get a value for `sender` from the user.
+# Adding a text input area to get a value for `sender` from the user.
 sender_data = st.text_input("Sender Data")
 
-# @TODO:
-# Add an input area where you can get a value for `receiver` from the user.
+# Adding a text input area wto get a value for `receiver` from the user.
 receiver_data = st.text_input("Receiver Data")
 
-# @TODO:
-# Add an input area where you can get a value for `amount` from the user.
+# Adding a number input area to get a value for `amount` from the user.
 amount_data = st.number_input("Amount")
 
 if st.button("Add Block"):
     prev_block = pychain.chain[-1]
     prev_block_hash = prev_block.hash_block()
 
-    # @TODO
-    # Update `new_block` so that `Block` consists of an attribute named `record`
+    # Update `new_block`, adding an attribute named `record`
     # which is set equal to a `Record` that contains the `sender`, `receiver`,
     # and `amount` values
     new_block = Block(
@@ -181,8 +148,9 @@ st.markdown("## The PyChain Ledger")
 
 pychain_df = pd.DataFrame(pychain.chain)
 
-# set There is a bug in Arrow which causes a conversion from numpy.dtype to pyarrow.DataType to fail. Thus, an error is thrown when trying to display df.dtypes.
+# There is a bug in Arrow which causes a conversion to pyarrow.DataType to fail. Thus, an error is thrown when trying to display df.dtypes.
 # The current workaround is to convert all cells to strings with df.dtypes.astype(str) until the issue is resolved
+
 pychain_df_str = pychain_df.dtypes.astype(str)
 
 st.write(pychain_df_str)
