@@ -10,7 +10,6 @@ import hashlib
 
 ################################################################################
 # Step 1:
-# Create a Record Data Class
 
 # Defining a new Python data class named `Record` with a
 # formalized data structure that consists of the `sender`, `receiver`, and
@@ -23,7 +22,6 @@ class Record:
     amount: float
     
 # Step 2:
-# Modify the Existing Block Data Class to Store Record Data
 
 # 1. Add the `record` attribute to the Block class.
 # 2. Set the data type of the `record` attribute to `Record`.
@@ -38,10 +36,15 @@ class Block:
     timestamp: str = datetime.datetime.utcnow().strftime("%H:%M:%S")
     nonce: str = 0
 
+    # Adding a new function called `hash_block`
     def hash_block(self):
+        
+        # Adding an instance of the `sha256` hashing function
         sha = hashlib.sha256()
-
+        
+        # Encoding the Block's data attribute
         record = str(self.record).encode()
+        # Updating the encoded data using the hashing function
         sha.update(record)
 
         creator_id = str(self.creator_id).encode()
@@ -56,8 +59,11 @@ class Block:
         nonce = str(self.nonce).encode()
         sha.update(nonce)
 
+        # Return the hashes of all the Block class attributes
         return sha.hexdigest()
 
+# Adding a `difficulty` data attribute to the `PyChain` data class
+# with a data type of `int` and a default value of 4.
 
 @dataclass
 class PyChain:
@@ -67,6 +73,8 @@ class PyChain:
     def proof_of_work(self, block):
 
         calculated_hash = block.hash_block()
+    
+        # Adding a `num_of_zeros` data attribute that multiplies the string value ("0") by the `difficulty` value.
 
         num_of_zeros = "0" * self.difficulty
 
@@ -76,7 +84,7 @@ class PyChain:
 
             calculated_hash = block.hash_block()
 
-        print("Wining Hash", calculated_hash)
+        print("Winning Hash", calculated_hash)
         return block
 
     def add_block(self, candidate_block):
@@ -114,24 +122,23 @@ st.markdown("## Store Data in the Chain")
 ################################################################################
 
 # Step 3:
-# Add Relevant User Inputs to the Streamlit Interface
 
 # Adding a text input area to get a value for `sender` from the user.
+
 sender_data = st.text_input("Sender Data")
 
 # Adding a text input area wto get a value for `receiver` from the user.
+
 receiver_data = st.text_input("Receiver Data")
 
 # Adding a number input area to get a value for `amount` from the user.
+
 amount_data = st.number_input("Amount")
 
 if st.button("Add Block"):
     prev_block = pychain.chain[-1]
     prev_block_hash = prev_block.hash_block()
 
-    # Update `new_block`, adding an attribute named `record`
-    # which is set equal to a `Record` that contains the `sender`, `receiver`,
-    # and `amount` values
     new_block = Block(
         record=Record(sender_data, receiver_data, amount_data),
         creator_id=42,
@@ -142,9 +149,11 @@ if st.button("Add Block"):
     st.balloons()
 
 ################################################################################
-# Streamlit Code (continues)
+# Streamlit Code
 
 st.markdown("## The PyChain Ledger")
+
+# Creating a Pandas DataFrame to display the `PyChain` ledger
 
 pychain_df = pd.DataFrame(pychain.chain)
 
@@ -153,9 +162,16 @@ pychain_df = pd.DataFrame(pychain.chain)
 
 pychain_df_str = pychain_df.dtypes.astype(str)
 
+# Using the Streamlit `write` function to display the `PyChain` DataFrame
+
 st.write(pychain_df_str)
 
+# Adding a Streamlit slider named "Block Difficulty" that allows the user to update a difficulty value, setting it equal to the variable `difficulty`
+
 difficulty = st.sidebar.slider("Block Difficulty", 1, 5, 2)
+
+# Updating the `difficulty` data attribute of the `PyChain` data class (`pychain.difficulty`) with this new `difficulty` value that is selected by the user
+
 pychain.difficulty = difficulty
 
 st.sidebar.write("# Block Inspector")
